@@ -718,8 +718,8 @@ e:
 
 cd $csv_path
 
-#for ($i = 0; $i -lt $csv_files.Length; $i++)
-for ($i = 0; $i -lt 2; $i++) # lệnh test với 2 query đầu
+for ($i = 0; $i -lt $csv_files.Count; $i++)
+#for ($i = 0; $i -lt 2; $i++) # lệnh test với 2 query đầu
 {
     Write-Host ""
     Write-Host $(($i+1).ToString('00') + "." + $file_name)
@@ -728,7 +728,7 @@ for ($i = 0; $i -lt 2; $i++) # lệnh test với 2 query đầu
     Out-File -FilePath $log_file -InputObject $(($i+1).ToString('00') + "." + $file_name) -Append
 
     # bcp $sql_queries[$i] queryout $file_name -S $sql_instance -U $sql_username -P $sql_pass -c -C 65001 -t $csv_delim | Select-String -Pattern 'rows copied', 'clock' >> $log_file
-    sqlcmd -S $sql_instance -d $sql_database -U $sql_username -P $sql_pass -Q $sql_queries[$i] -p -u -W -s $csv_delim -o $temp_file
+    sqlcmd -S $sql_instance -d $sql_database -U $sql_username -P $sql_pass -Q $sql_queries[$i] -p -u -W -w 65535 -s $csv_delim -o $temp_file
     $o = Get-Content $temp_file
 
     $file_name = $($csv_path + $csv_files[$i] + '.csv')
@@ -758,8 +758,9 @@ Out-File -FilePath $log_file -InputObject $("Done: " + $time) -Append
 $f_name = Split-Path $log_file -Leaf
 ..\git add $f_name
 
-..\git commit -m "abc"
-..\git push -u origin main
+..\git commit -m "$time"
+
+..\git push --force origin main
 
 Write-Host ""
 Write-Host $("===> Xong! " + $time)
