@@ -4,7 +4,7 @@ $sql_username = 'ssrs'
 $sql_pass = '9981+DuLich'
 $sql_queries = @()
 
-$csv_path = 'E:\' # 'E:\Softs\Prog\Git\bin\emis_data\'
+$csv_path = 'E:\Softs\Prog\Git\bin\emis_data\'
 $csv_files = @()
 $csv_delim = '~'
 
