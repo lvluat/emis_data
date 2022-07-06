@@ -4,7 +4,7 @@ $sql_username = 'ssrs'
 $sql_pass = '9981+DuLich'
 $sql_queries = @()
 
-$csv_path = 'E:\Softs\Prog\Git\bin\emis_data\'
+$csv_path = 'E:\' # 'E:\Softs\Prog\Git\bin\emis_data\'
 $csv_files = @()
 $csv_delim = '~'
 
@@ -729,13 +729,15 @@ for ($i = 0; $i -lt $csv_files.Count; $i++)
 
     # bcp $sql_queries[$i] queryout $file_name -S $sql_instance -U $sql_username -P $sql_pass -c -C 65001 -t $csv_delim | Select-String -Pattern 'rows copied', 'clock' >> $log_file
     sqlcmd -S $sql_instance -d $sql_database -U $sql_username -P $sql_pass -Q $sql_queries[$i] -p -u -W -w 65535 -s $csv_delim -o $temp_file
-    $o = Get-Content $temp_file
+    $o = Get-Content -Path $temp_file     
 
     $file_name = $($csv_path + $csv_files[$i] + '.csv')
 
     # Lưu dữ liệu ra file csv    
-    $data = $o | Select-String -Pattern 'rows affected', 'Network packet size', 'xact', 'Clock Time' -NotMatch
-    Out-File -FilePath $file_name -InputObject $data -Encoding utf8
+    $o | Select-String -Pattern 'rows affected', 'Network packet size', 'xact', 'Clock Time', '--' -NotMatch > $temp_file
+    $data = Get-Content -Path $temp_file
+    $data | where {$_ -ne ""}  > $file_name
+    #Out-File -FilePath $file_name -InputObject $data -Encoding utf8
 
     $f_name = Split-Path $file_name -Leaf
     ..\git add $f_name    
